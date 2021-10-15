@@ -61,7 +61,7 @@ Colab Pro is said to allow users up to 24 hours of runtime. In practice, the mod
 malliGAN trained for 6-7 days.
 The configurations and command to kick off training for this GAN:
 
-<code>
+```python
 RESULTS = "/content/drive/MyDrive/malliGAN/results"
 DATA = "/content/drive/MyDrive/malliGAN/datasets/food-eheitner1024"
 SNAP = 4
@@ -72,7 +72,7 @@ TARGET = 0.7
 
 cmd = f"/usr/bin/python3 /content/stylegan2-ada-pytorch/train.py --snap {SNAP} --outdir {RESULTS} --data {DATA} --mirror {MIRRORED} --aug {AUG} --augpipe {AUGPIPE} --target {TARGET}"
 !{cmd}
-</code>
+```
 
 `RESULTS` indicates the directory where the training results will be stored while `DATA` points to the location of the TFRecords dataset. The training exports network pickles (`network-snapshot-<KIMG>.pkl`), example fake images, and FID scores at regular intervals controlled by `--snap`. In this case, `SNAP = 4`, so these results are saved every 4 ticks or every 16K real images shown to D.
 
@@ -144,7 +144,7 @@ StyleGAN2-ADA was trained for about 5 days on 2,147 images of jiu jitsu players 
 
 The training for grappleGAN was pretty much the same as malliGAN. The only difference was in its ADA settings. The command used to kick off training:
 
-<code>
+```python
 RESULTS = "/content/drive/MyDrive/grappleGAN/results"
 DATA = "/content/drive/MyDrive/grappleGAN/datasets/bjj1024"
 SNAP = 4
@@ -152,7 +152,7 @@ MIRRORED = True
 
 cmd = f"/usr/bin/python3 /content/stylegan2-ada-pytorch/train.py --snap {SNAP} --outdir {RESULTS} --data {DATA} --mirror {MIRRORED}"
 !{cmd}
-</code>
+```
 
 ADA is enabled by default, which is the only reason it does not appear in the command.
 `--augpipe` was set to the default argument `"bgc"` for all training runs. The StyleGAN2-ADA paper notes that with a fixed `p` and a 2K training set, pixel blitting and geometric transforms, and color transforms proved the most beneficial (however, `p` is not fixed when ADA is enabled). `--target` was set to 0.6, the default value of `p`.
