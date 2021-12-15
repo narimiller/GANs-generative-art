@@ -1,6 +1,6 @@
 # GANs for Generative Art
 
-Generative Adversarial Networks (GANs) are deep learning generative models which learn to generate new instances of whatever data they have been trained on. Once a GAN has estimated the distribution of the training data, it learns how to map latent codes (such as a vector of 512 numbers) to specific outputs. This learned latent space can be exploited to create interpolation videos, which can be used to market a product/business or can be sold on their own as NFTs. The use of GANs as part of a digital art practice is relatively new and currently popular among AI artists. 
+Generative Adversarial Networks (GANs) are deep learning models which learn to generate new instances of whatever data they have been trained on. Once a GAN has estimated the distribution of the training data, it learns how to map latent codes (such as a vector of 512 numbers) to specific outputs. This learned latent space can be exploited to create interpolation videos, which can be used to market a product/business or can be sold on their own as NFTs. The use of GANs as part of a digital art practice is relatively new and currently popular among AI artists. 
 
 This project implements the Pytorch version of StyleGAN2-ADA and explores the creative potential of the GAN latent space. The goal is to generate novel promotional videos for businesses like Malli, a Los Angeles-based pop-up restaurant, as well as NFTs. The GANs trained in this project have been aptly named **malliGAN** (a GAN for generating new instances of food images) and **grappleGAN** (a GAN for generating images of people grappling).
 
@@ -9,10 +9,10 @@ This project implements the Pytorch version of StyleGAN2-ADA and explores the cr
 The **Generative modeling framework** is as follows [1]:
 
 - We have a dataset of observations X. 
-- We assume that the observations have been generated according to some unknown distribution, $\rho_{data}$.
-- A generative model $\rho_{model}$ tries to mimic $\rho_{data}$. If we achieve this goal, we can sample from $\rho_{model}$ to generate observations that appear to have been drawn from $\rho_{data}$.
-- We are impressed by $\rho_{model}$ if:
-> 1. It can generate samples that appear to have been drawn from $\rho_{data}$.
+- We assume that the observations have been generated according to some unknown distribution, p_data.
+- A generative model p_model tries to mimic p_data. If we achieve this goal, we can sample from p_model to generate observations that appear to have been drawn from p_data.
+- We are impressed by p_model if:
+> 1. It can generate samples that appear to have been drawn from p_data.
 > 2. It can generate samples that are suitably different from the observations in X. That is, the model should not reproduce any of the observations it was trained on.
 
 GANs were first proposed by Ian Goodfellow et. al. in 2014 to overcome the drawbacks of other generative models that were prevalent at the time. A GAN is comprised of two neural networks that are trained in an adversarial process:
@@ -25,7 +25,7 @@ GANs were first proposed by Ian Goodfellow et. al. in 2014 to overcome the drawb
 
 [Image source]: https://www.slideshare.net/xavigiro/deep-learning-for-computer-vision-generative-models-and-adversarial-training-upc-2016?from_action=save
 
-The two networks are trained together. G generates a batch of samples, which are shown to D along with real images. D classifies the images as "real" or "fake". In subsequent rounds, D is updated to get better at discriminating between real and fake samples while G is updated to get better at fooling D. In this process, G is learning the best possible approximation of the distribution that could have produced the real-world data (the best posible $\rho_{model}$). Ideally, the generated images will become impossible to distinguish from the real images over time. 
+The two networks are trained together. G generates a batch of samples, which are shown to D along with real images. D classifies the images as "real" or "fake". In subsequent rounds, D is updated to get better at discriminating between real and fake samples while G is updated to get better at fooling D. In this process, G is learning the best possible approximation of the distribution that could have produced the real-world data (the best posible p_model). Ideally, the generated images will become impossible to distinguish from the real images over time. 
 
 In 2018, NVIDIA labs developed StyleGAN, which caused a large buzz in the media with its generation of high quality images of fake human faces. StyleGAN uses Progressive Growing (from the earlier PC-GAN) to generate high-resolution images and incorporates image styles into each layer of G. The result is an architecture that allows for the generation of large images with increased control over image synthesis [3]. The team made further improvements with StyleGAN2. Among other changes, StyleGAN2 replaced Progressive Growing with a hierarchal G with skip connections. StyleGAN2 addresses the droplet artifacts produced by its predecessor and generates even more realistic images. Researchers recognized that a reduction in the number of images required to start training would be beneficial in many applications of generative modeling, so StyleGAN2-ADA was born [2]. GANs typically require tens of thousands to train properly, as using too little data tends to lead to overfitting in D. D will fail to provide useful feedback to the generator and training diverges. With its Adaptive Discriminator Augmentation (ADA) feature, StyleGAN2-ADA dynamically changes the amount of non-leaking image augmentations as needed throughout training. **StyleGAN2-ADA is the model of choice for this project, as it is ideal for stabilizing training in the case of limited data.**
 
@@ -82,7 +82,7 @@ One leaky augmentation was enabled by setting `--mirror` to `True`, which augmen
 
 Augmentations are non-leaking on the condition that they are skipped with non-zero probability. The ADA feature of StyleGAN2-ADA allows the GAN to dynamically change the amount of non-leaking augmentations throughout training based on the degree of overfitting or underfitting. The strength of augmentation is controlled by the hyperparameter `p`, which can range from 0 to 1.
 
-Setting `--aug` to `"ada"` enables Adaptive Discriminator Augmentation. Initially, all available augmentations were enabled with `--augpipe` set to `"bgcfnc"`, a set of 18 transformations grouped into 6 categories: pixel blitting (x-flips, rotations, integer translation), geometric transformations, color transforms, image-space filtering, additive noise, and cutout. `--target` sets the maximum value for `p`. According to the StyleGAN2-ADA paper, the augmentations tend to become leaky when `p` approaches 1. `--target` was set to 0.7 so that `p` would not exceed 0.7 during training. After a few runs, `--augpipe` was set to `"bgc"`. In a future experiment, augmentation settings should be kept the same throughout the training process.
+Setting `--aug` to `"ada"` enables Adaptive Discriminator Augmentation. All available augmentations were enabled with `--augpipe` set to `"bgcfnc"`, a set of 18 transformations grouped into 6 categories: pixel blitting (x-flips, rotations, integer translation), geometric transformations, color transforms, image-space filtering, additive noise, and cutout. `--target` sets the maximum value for `p`. According to the StyleGAN2-ADA paper, the augmentations tend to become leaky when `p` approaches 1. `--target` was set to 0.7 so that `p` would not exceed 0.7 during training. After a few runs, `--augpipe` was set to `"bgc"`. In a future experiment, augmentation settings should be kept the same throughout the training process.
 
 ### Results
 
@@ -112,7 +112,7 @@ Checking the generator output against the real images:
 
 The GAN appears to have learned the color variation in the original dataset. It attempts a good variety of dishes, but it has trouble with detail, surfaces, multiple dishes, and perspective. Some dishes look edible from afar, but most look like food from an alien planet and individual ingredients are not so identifiable.
 
-The lack of realism in the generated images is likely due to a lack of training data. Although StyleGAN2-ADA is designed for limited data regimes, a dataset of 392 images was still too little to learn $\rho_{data}$. The GAN may perform much better on at least 1K images, but 392 images was all the business had at the time. The trend of the FID plot suggests that additional training time would not improve the model by much.
+The lack of realism in the generated images is likely due to a lack of training data. Although StyleGAN2-ADA is designed for limited data regimes, a dataset of 392 images was still too little to learn p_data. The trend of the FID plot suggests that additional training time would not improve the model by much.
 
 ### Latent Space Exploration
 
@@ -195,17 +195,15 @@ The generated images may give the "feel" of watching jiu jitsu, but they cannot 
 
 ## Conclusions
 
-The results of both GANs leave something to be desired.
-
 malliGAN performance suffered from a lack of training data, but the photos provided were all the the business owner had at the time of data collection. Malli opened towards beginning of the COVID pandemic and is a relatively new business. It will be good to revisit this project in 1-2 years, once the business has accumulated more photographs of its dishes. The latent space of a trained GAN can be used to create interesting interpolation/morphing videos for businesses that have been open for around 3+ years or have at least 1K-2K images available.
 
-grappleGAN performance suffered from a lack of simplicity in the training images. The dataset was likely too diverse in terms of grappling positions, scale, camera angles, etc. This GAN became more of an abstract art project than a means to create promotional materials for a tournament or brand. A GAN trained on complex subject matter with an abstract-looking output can at the very least be used to create digital art.
+grappleGAN performance suffered from a lack of simplicity in the training images. This GAN became more of an abstract art project than a means to create promotional materials for a tournament or brand. A GAN trained on complex subject matter with an abstract-looking output could at the very least be used to create digital art.
 
-**The main takeaway is that better image quality, and therefore better interpolation videos, can be achieved with GANs trained on larger and less diverse datasets. Lower quality outputs could still be used for NFTs/digital art.**
+**Better image quality, and therefore better interpolation videos, can be achieved with GANs trained on larger and less diverse datasets. Lower quality outputs could still be used for NFTs/digital art.**
 
 ## Next Steps
 
-- In subsequent training runs on Google Colab, set `p` to the last value used in the previous run. Google Colab tends to time out often. `p` is initialized to 0 at the beginning of each training run and takes some time to climb back up. Setting `p` when resuming training can allow for stronger augmentations throughout the training process.
+- In Google Colab, allow stronger augmentations by setting `p` to the last value used in subsequent training runs. Colab tends to time out often. `p` is initialized to 0 at the beginning of each training run and takes some time to climb back up. More non-leaking augmentations may result in better image quality.
 - Revisit malliGAN when more data is available to create useful marketing videos.
 - Collect less diverse datasets for experiments that will be used for NFT/digital art production.
 - Combine GAN art with other video editing techniques.
