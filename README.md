@@ -1,3 +1,5 @@
+![](figures/malli-fakes.png "Fakes (generated images)")
+
 # GANs for Generative Art
 
 Generative Adversarial Networks (GANs) are deep learning models which learn to generate new instances of whatever data they have been trained on. Once a GAN has estimated the distribution of the training data, it learns how to map latent codes (such as a vector of 512 numbers) to specific outputs. This learned latent space can be exploited to create interpolation videos, which can be used to market a product/business or can be sold on their own as NFTs. The use of GANs as part of a digital art practice is relatively new and currently popular among AI artists. 
